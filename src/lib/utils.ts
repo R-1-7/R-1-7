@@ -64,6 +64,15 @@ export const AI_PROVIDERS = [
     icon: "⚡",
     keyPrefix: "gsk_",
   },
+  {
+    id: "brave",
+    name: "Brave Search",
+    models: ["web-search"],
+    color: "#fb542b",
+    icon: "🔍",
+    keyPrefix: "BSA",
+    isAddon: true,
+  },
 ] as const;
 
 export type ProviderId = (typeof AI_PROVIDERS)[number]["id"];

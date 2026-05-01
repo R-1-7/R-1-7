@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { ConversationSidebar } from "@/components/chat/ConversationSidebar";
 import { ChatWindow } from "@/components/chat/ChatWindow";
+import { KeyboardShortcuts } from "@/components/ui/KeyboardShortcuts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -54,6 +55,19 @@ export default function ChatPage() {
     loadPrefs();
   }, [loadConversations, loadKeys, loadPrefs]);
 
+  // Global shortcut: Ctrl+N → new conversation
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "n") {
+        e.preventDefault();
+        createConversation();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const createConversation = async () => {
     const res = await fetch("/api/conversations", { method: "POST" });
     const conv = await res.json();
@@ -103,10 +117,8 @@ export default function ChatPage() {
       {/* Toggle sidebar */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="absolute left-[calc(var(--sidebar-w,0px)+56px)] top-1/2 -translate-y-1/2 z-10 w-5 h-10 glass border border-slate-700/50 rounded-r-lg flex items-center justify-center text-slate-600 hover:text-slate-400 transition-all"
-        style={{
-          left: sidebarOpen ? "calc(256px + 56px)" : "56px",
-        }}
+        className="absolute top-1/2 -translate-y-1/2 z-10 w-5 h-10 glass border border-slate-700/50 rounded-r-lg flex items-center justify-center text-slate-600 hover:text-slate-400 transition-all"
+        style={{ left: sidebarOpen ? "calc(256px + 56px)" : "56px" }}
       >
         {sidebarOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
       </button>
@@ -153,8 +165,14 @@ export default function ChatPage() {
             >
               Démarrer une conversation
             </button>
+            <p className="text-xs text-slate-700 mt-3">ou appuyez sur Ctrl+N</p>
           </div>
         )}
+      </div>
+
+      {/* Keyboard shortcuts button */}
+      <div className="absolute bottom-4 right-4 z-20">
+        <KeyboardShortcuts />
       </div>
     </div>
   );

@@ -16,9 +16,11 @@ export function ModelSelector({ provider, model, onChange, availableProviders }:
   const ref = useRef<HTMLDivElement>(null);
 
   const current = getProvider(provider);
-  const filtered = availableProviders
+  const filtered = (availableProviders
     ? AI_PROVIDERS.filter((p) => availableProviders.includes(p.id))
-    : AI_PROVIDERS;
+    : AI_PROVIDERS
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ).filter((p) => !(p as any).isAddon);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {

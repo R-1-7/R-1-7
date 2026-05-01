@@ -141,10 +141,11 @@ export default function KeysPage() {
         {/* Available providers */}
         <div>
           <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
-            Providers disponibles
+            Providers IA disponibles
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {AI_PROVIDERS.map((p) => {
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {AI_PROVIDERS.filter((p) => !(p as any).isAddon).map((p) => {
               const configured = configuredProviders.includes(p.id);
               return (
                 <div
@@ -178,6 +179,45 @@ export default function KeysPage() {
                 </div>
               );
             })}
+          </div>
+
+          {/* Add-ons section */}
+          <div className="mt-6">
+            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+              Add-ons & outils
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {AI_PROVIDERS.filter((p) => (p as any).isAddon).map((p) => {
+                const configured = configuredProviders.includes(p.id);
+                return (
+                  <div
+                    key={p.id}
+                    className="glass rounded-xl p-4 border border-slate-700/20 cursor-pointer hover:border-slate-600/40 transition-all"
+                    onClick={() => { if (!configured) { setSelectedProvider(p.id); setModalOpen(true); } }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">{p.icon}</span>
+                      <p className="text-sm font-semibold text-slate-300">{p.name}</p>
+                      {configured && <CheckCircle size={14} className="ml-auto text-green-400" />}
+                    </div>
+                    <p className="text-xs text-slate-600">
+                      {p.id === "brave" ? "Recherche web en temps réel dans le chat" : ""}
+                    </p>
+                    {p.id === "brave" && (
+                      <p className="text-xs text-slate-700 mt-1">
+                        Clé gratuite : search.brave.com/api
+                      </p>
+                    )}
+                    {!configured && (
+                      <p className="text-xs text-cyan-500/60 mt-2 flex items-center gap-1">
+                        <Plus size={10} /> Configurer
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
